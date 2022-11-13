@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -58,6 +59,10 @@ func (m view_model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "enter", " ":
+			if len(m.history) > 1 {
+				m.history = append(m.history, m.choices[m.cursor])
+				return m, m.ssh_connection()
+			}
 			m.cursor = 0
 			m.history = append(m.history, m.choices[m.cursor])
 			m.choices = FindKeyList()
@@ -101,6 +106,16 @@ func (m view_model) View() string {
 
 	// Send the UI for rendering
 	return s
+}
+
+type editorFinishedMsg struct{ err error }
+
+func (m view_model) ssh_connection() tea.Cmd {
+
+	command := exec.Command("ssh", "-i", m.history[len(m.history)-1], m.history[0])
+	return tea.ExecProcess(command, func(err error) tea.Msg {
+		return editorFinishedMsg{err}
+	})
 }
 
 func Gay() {
