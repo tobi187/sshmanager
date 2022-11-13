@@ -18,7 +18,7 @@ type view_model struct {
 func initialModel() view_model {
 	return view_model{
 		// Our to-do list is a grocery list
-		choices:   FindIpList(),
+		choices:   append(FindIpList(), "New Entry"),
 		view_name: "ip",
 		history:   []string{},
 		// A map which indicates which choices are selected. We're using
@@ -57,16 +57,10 @@ func (m view_model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 
-		// The "enter" key and the spacebar (a literal space) toggle
-		// the selected state for the item that the cursor is pointing at.
 		case "enter", " ":
-			fmt.Println(m.selected)
-			_, ok := m.selected[m.cursor]
-			if ok {
-				delete(m.selected, m.cursor)
-			} else {
-				m.selected[m.cursor] = struct{}{}
-			}
+			m.cursor = 0
+			m.history = append(m.history, m.choices[m.cursor])
+			m.choices = FindKeyList()
 		}
 	}
 
@@ -77,7 +71,11 @@ func (m view_model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m view_model) View() string {
 	// The header
-	s := "What should we buy at the market?\n\n"
+	s := "Which Server to connect to?\n\n"
+
+	if len(m.history) > 0 {
+		s = "Which keyFile to use?\n\n"
+	}
 
 	// Iterate over our choices
 	for i, choice := range m.choices {

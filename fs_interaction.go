@@ -48,6 +48,21 @@ func FindKeys() map[string]string {
 	return keys
 }
 
+func FindKeyList() []string {
+	hDir, _ := os.UserHomeDir()
+	dir, _ := os.ReadDir(hDir + "/.ssh/")
+
+	keys := []string{}
+	for _, d := range dir {
+		fInfo, _ := fs.DirEntry.Info(d)
+		if !fInfo.IsDir() && !strings.HasSuffix(fInfo.Name(), ".pub") {
+			keys = append(keys, fInfo.Name())
+		}
+	}
+
+	return keys
+}
+
 func filterIpLine(l []string) (string, string) {
 	res := []string{}
 	for _, c := range l {
