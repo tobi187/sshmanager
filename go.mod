@@ -1,4 +1,4 @@
-module fun/sshmanager
+module github.com/tobi187/sshmanager
 
 go 1.18
 

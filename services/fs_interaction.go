@@ -1,4 +1,4 @@
-package main
+package services
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ func FindIps() map[string]string {
 
 func FindIpList() []string {
 	if file, err := os.ReadFile("ips.txt"); err == nil {
-		ipMap := []string{}
+		ipMap := []string{"New Entry"}
 
 		for _, line := range strings.Split(string(file), "\n") {
 			k, _ := filterIpLine(strings.Split(line, " "))
